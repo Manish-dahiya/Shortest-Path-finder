@@ -116,7 +116,7 @@ body{
 }
 .wall{
     background-color: var(--wall);
-    animation: wallAnimation .5s ease-out forwards ;
+    animation: wallAnimation 1s ease-out forwards ;
 }
 .source{
     background: url("./assets/source.png");
