@@ -79,15 +79,16 @@ cells.forEach((cell) => {
             cells.forEach((cell) => {
                 cell.classList.remove(dragPoint)
             })
-            cell.classList.add(dragPoint)
-            let coordinate = source.x = e.target.id.split("-")
+            e.target.classList.add(`${dragPoint}`)
+            const cordinate = e.target.id.split('-');
 
-            if (dragPoint == "source") {
-                source.x = parseInt(coordinate[0])
-                source.y = parseInt(coordinate[1]);
-            } else {
-                target.x = parseInt(coordinate[0])
-                target.y = parseInt(coordinate[1]);
+            if (dragPoint === 'source') {
+                source.x = +cordinate[0];
+                source.y = +cordinate[1];
+            }
+            else {
+                target.x = +cordinate[0];
+                target.y = +cordinate[1];
             }
 
           
@@ -244,8 +245,9 @@ visualiseBtn.addEventListener("click",()=>{
     pathToAnimate=[]
     // dijstkra();
     // assignWeigths()
-    greedy()
-    // bfs()
+    // greedy()
+    bfs()
+    // astar()  
     animate(visitedCell,"visited")
     
 })
@@ -465,6 +467,63 @@ function greedy(){
         }
     }
 }
+
+///////////////////A* algorithm///////////////////
+function astar(){
+    const openSet=new priority_queue();//our pq is the open set
+    closedSet=[];//for the purpose of visited
+    const parentMap=new Map();
+    visitedCell=[]//for animation purpose
+    const distance=[]
+
+    for(let i=0;i<row;i++){
+        const currRow=[]
+        for(let j=0;j<col;j++){
+            currRow.push(Infinity)
+        }
+        distance.push(currRow)
+    }
+
+    distance[source.x][source.y] = 0;
+    openSet.push({coordinate:source,cost: 0 + heuristicValue(source)});
+    
+    let drows = [-1, 0, 1, 0];
+    let dcols = [0, 1, 0, -1];
+
+    while(openSet.length >0){
+        const {coordinate,cost:fn}=openSet.pop();
+        let i= coordinate.x;
+        let j=coordinate.y;
+
+        if(i==target.x && j==target.y){
+            getPath(parentMap,target);
+            return 
+        }
+
+        closedSet.push(`${i}-${j}`);//only mark it visited when all it's neighbours are done 
+
+        for(let k=0;k<4;k++){
+            let nrow= i + drows[k];
+            let ncol= j +  dcols[k];
+
+            if (nrow >= 0 && nrow < row && ncol >= 0 && ncol < col  && !closedSet.includes(`${nrow}-${ncol}`)  && !matrix[nrow][ncol].classList.contains("wall")) {
+                const gn = distance[i][j] + getEdgeWeight(nrow,ncol);
+                const newfn= gn + heuristicValue({x:nrow,y:ncol});
+                if(newfn < distance[nrow][ncol]){
+                parentMap.set(`${nrow}-${ncol}`,coordinate);//child:parent
+                visitedCell.push(matrix[nrow][ncol])  //for animation purpose
+                distance[nrow][ncol]= newfn;
+
+                
+                openSet.push({coordinate:{x:nrow,y:ncol},cost:newfn});
+                }
+            }
+
+        }        
+        
+    }
+}
+
 
 
 

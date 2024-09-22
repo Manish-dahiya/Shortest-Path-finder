@@ -133,7 +133,7 @@ body{
 }
 .visited{
     background-color: var(--visited);
-    animation: visitedAnimation 0.1s ease-out forwards;
+    animation: visitedAnimation 1s ease-out forwards;
 }
 
 
@@ -155,20 +155,24 @@ body{
     }
 }
 @keyframes visitedAnimation {
-    0% {  
-        background-color:  rgba(249, 233, 13, 0.75);
+    0% {
+        transform: scale(.3);
+        background-color: rgba(25, 42, 86, 0.75); /* Deep Midnight Blue */
+        border-radius: 100%;
     }
 
     50% {
-        
-        background-color:rgba(17, 104, 217, 0.75);
+        background-color: rgba(45, 152, 218, 0.75); /* Sky Blue */
     }
 
-    75% {  
-        background-color: rgba(0, 217, 159, 0.75);
+    75% {
+        transform: scale(1);
+        background-color: rgba(77, 209, 102, 0.75); /* Soft Mint Green */
     }
-    100%{
-        background-color: var(--visited);
+
+    100% {
+        transform: scale(1);
+        background-color: rgba(237, 85, 59, 0.75); /* Soft Coral Red */
     }
 }
 
