@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shotter</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div>PathFinding Visualiser</div>
+        <div><button class="visualise-btn" id="visualiseBtn">Visualise</button></div>
+        <div>
+            <ul class="ul-options">
+                <li id="clearBoardBtn">Clear board</li>
+                <li id="clearWallsBtn">Clear Walls</li>
+                <li id="generateMazeBtn">Generate Maze</li>
+                <li>
+                    <select name="speed" id="speed">
+                        <option value="" hidden>speed</option>
+                        <option value="1">slow</option>
+                        <option value="1.5">medium</option>
+                        <option value="2">fast</option>
+                    </select>
+                </li>
+                <li>
+                    <select name="algo" id="algo">
+                        <option value="" hidden>Algorithms</option>
+                        <option value="bfs" >bfs</option>
+                        <option value="dfs" >dfs</option>
+                        <option value="dijkstra" > Dijkstra </option>
+                    </select>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <header class="header">
+        <div>start Node</div>
+        <div><span id=""></span>Target Node</div>
+        <div><span id="unvisited-node">&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;Unvisited Node</div>
+        <div><span id="visited-node">&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;visited Node</div>
+        <div><span id="wall-node">&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;wall node</div>
+        <div><span id="shortest-path-node">&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;shortest-path-node</div>
+    </header>
+
+    <div id="board">
+
+    </div>
+
+    <script src="./js/index.js"></script>
+</body>
+</html>
