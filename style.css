@@ -127,6 +127,7 @@ body{
     background: url("./assets/target.jpeg");
     background-size: cover;
 }
+
 .path{
     background-color: var(--path);
 }

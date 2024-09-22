@@ -112,6 +112,7 @@ clearBoardBtn.addEventListener("click", () => {
         cell.classList.remove("wall")
         cell.classList.remove("visited");
         cell.classList.remove("path")
+        cell.classList.remove("costly");
     })
 })
 clearWallsBtn.addEventListener("click", () => {
@@ -222,8 +223,11 @@ function generateMaze(rowStart, rowEnd, colStart, colEnd, surroundingWall, orien
 generateMazeBtn.addEventListener("click",()=>{
     cells.forEach((cell)=>{
         cell.classList.remove("wall");
+        cell.classList.remove("visited")
+        cell.classList.remove("path")
     })
     wallToAnimate=[]
+    pathToAnimate=[];
     generateMaze(0,row-1,0,col-1,false,"horizontal")
     animate(wallToAnimate,'wall');
 })
@@ -231,13 +235,17 @@ generateMazeBtn.addEventListener("click",()=>{
 
 
 ///////////////////PATH FINDING ALGORITHM////////////////
-///////////////////////////////////////////////////////
+///////////////////////BFS///////////////////////////////
 
 var visitedCell=[];
 var pathToAnimate=[]
 visualiseBtn.addEventListener("click",()=>{
     visitedCell=[];
-    bfs();
+    pathToAnimate=[]
+    // dijstkra();
+    // assignWeigths()
+    greedy()
+    // bfs()
     animate(visitedCell,"visited")
     
 })
@@ -268,11 +276,13 @@ function bfs() {
             let ncol = j + dcols[k];
 
             if (nrow >= 0 && nrow < row && ncol >= 0 && ncol < col  && !visited.includes(`${nrow}-${ncol}`)  && !matrix[nrow][ncol].classList.contains("wall")) {
-                parentMap.set(`${nrow}-${ncol}`,cell);//child:parent
+                if(!parentMap.has(`${nrow}-${ncol}`)){
+                    parentMap.set(`${nrow}-${ncol}`,cell);//child:parent
+                }
                 visitedCell.push(matrix[nrow][ncol])  
                 if(nrow== target.x && ncol==target.y){
                     getPath(parentMap,target);
-                    return;
+                    return; 
                 }
                 visited.push(`${nrow}-${ncol}`)// Mark this cell as visited
                 queue.push({x:nrow,y:ncol});  // Enqueue the updated cell
@@ -289,6 +299,174 @@ function getPath(parentMap,target){
     getPath(parentMap,parent)
 
 }
+
+
+///////////////////dijstkra algo//////////////////
+class priority_queue{
+    constructor(){
+        this.elements=[];
+        this.length=0;
+    }
+
+    push(data){
+        this.elements.push(data);
+        this.length++;
+        this.upheapify(this.length-1);
+    }
+    pop(){
+        this.swap(0,this.length-1);
+        const poped=this.elements.pop();
+        this.length--;
+        this.downHeapify(0);
+        return poped;
+    }
+    upheapify(i){
+        if(i==0)return ;//reached at top
+        const parent= Math.floor((i-1)/2);
+        if(this.elements[i].cost <this.elements[parent].cost){
+            this.swap(parent,i);
+            this.upheapify(parent);
+        }
+    }
+    downHeapify(i){
+        let minNode=i;
+        let leftChild= (2*i)+1;
+        let rightChild=(2*i)+2;
+
+        if(leftChild <this.length && this.elements[leftChild].cost < this.elements[minNode].cost){
+            minNode=leftChild;
+        }
+        if(rightChild <this.length && this.elements[rightChild].cost < this.elements[minNode].cost){
+            minNode=rightChild
+        }
+
+        if(minNode!=i){
+            this.swap(minNode,i);
+            this.downHeapify(minNode)
+        }
+    }
+    swap(x, y) {
+        [this.elements[x], this.elements[y]] = [this.elements[y], this.elements[x]];
+    }
+}
+
+function dijstkra(){
+   
+    const pq=new priority_queue();
+    const parentMap=new Map();//trackback the path
+    const distance =[];
+
+    for(let i=0;i<row;i++){
+        const currRow=[]
+        for(let j=0;j<col;j++){
+            currRow.push(Infinity)
+        }
+        distance.push(currRow)
+    }
+    
+    
+    distance[source.x][source.y] = 0;
+    pq.push({coordinate:source,cost:0});   
+    let drows = [-1, 0, 1, 0];
+    let dcols = [0, 1, 0, -1]; 
+    while (pq.length > 0) {
+        const {coordinate,cost}=pq.pop();
+
+        if(coordinate.x==target.x && coordinate.y==target.y){
+            getPath(parentMap,target)
+            return ;
+        }
+      
+        for (let k = 0; k < 4; k++) {
+           
+            let nrow = coordinate.x + drows[k];
+            let ncol = coordinate.y + dcols[k];
+
+            if (nrow >= 0 && nrow < row && ncol >= 0 && ncol < col  && !matrix[nrow][ncol].classList.contains("wall") ) {
+                const edgeWeight=getEdgeWeight(nrow,ncol); //Assuming edge weight = 1, between adjacent vertices
+                    const newDist= cost + edgeWeight
+
+                if(newDist < distance[nrow][ncol]){
+                   distance[nrow][ncol]= newDist
+                   pq.push({coordinate:{x:nrow,y:ncol},cost:newDist});
+                   parentMap.set(`${nrow}-${ncol}`,coordinate)
+                   visitedCell.push(matrix[nrow][ncol]) //to animate
+                }
+                
+            }
+        }
+
+    }
+
+   
+}
+
+
+function assignWeigths(){
+    for(let i=0;i<row;i++){
+        for(let j=0;j<col;j++){
+            let randomWeight=Math.floor(Math.random()*(9)+1);// =RAND()*([UpperLimit]-[LowerLimit])+[LowerLimit].
+         matrix[i][j].innerHTML=`${randomWeight}`
+        }
+    }
+    matrix[source.x][source.y].innerHTML="0"
+    matrix[target.x][target.y].innerHTML="0"
+    console.log("source node",source)
+    console.log("target node",target)
+}
+
+function getEdgeWeight(row, col) {
+    // let value=  matrix[row][col].innerHTML
+    // return parseInt(value);
+    return Math.random()<0.5?1:2;
+}
+
+
+////////////////greedy//////////////////
+function heuristicValue(node){
+    return Math.abs( target.x-node.x) +  Math.abs(target.y - node.y);
+}
+
+function greedy(){
+    const pq=new priority_queue();
+    const visited=[];
+    visitedCell=[] //to track back the path
+    const parentMap=new Map();
+
+    pq.push({coordinate:source,cost:heuristicValue(source)})
+    visitedCell.push(matrix[source.x][source.y]);//to animate the visited ones
+    visited.push(`${source.x}-${source.y}`);//our visited vector
+
+
+    let drows = [-1, 0, 1, 0];
+    let dcols = [0, 1, 0, -1];
+
+    // debugger
+    while (pq.length > 0) {
+        let {coordinate,cost} = pq.pop();
+        let i = coordinate.x;
+        let j = coordinate.y;
+
+        // Explore the four adjacent cells
+        for (let k = 0; k < 4; k++) {
+            let nrow = i + drows[k];
+            let ncol = j + dcols[k];
+
+            if (nrow >= 0 && nrow < row && ncol >= 0 && ncol < col  && !visited.includes(`${nrow}-${ncol}`)  && !matrix[nrow][ncol].classList.contains("wall")) {
+                parentMap.set(`${nrow}-${ncol}`,coordinate);//child:parent
+                visitedCell.push(matrix[nrow][ncol])  
+                if(nrow== target.x && ncol==target.y){
+                    getPath(parentMap,target);
+                    return;
+                }
+                visited.push(`${nrow}-${ncol}`)// Mark this cell as visited
+                pq.push({coordinate:{x:nrow,y:ncol},cost:heuristicValue({x:nrow,y:ncol})});  // Enqueue the updated cell
+            }
+        }
+    }
+}
+
+
 
 
 function  animate(elements,classname){
