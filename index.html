@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shotter</title>
     <link rel="stylesheet" href="./style.css">
 </head>
+
 <body>
     <nav class="navbar">
         <div>PathFinding Visualiser</div>
@@ -14,7 +16,14 @@
             <ul class="ul-options">
                 <li id="clearBoardBtn">Clear board</li>
                 <li id="clearWallsBtn">Clear Walls</li>
-                <li id="generateMazeBtn">Generate Maze</li>
+                <li id="generateMazeBtn">
+                    <select name="" id="mazetype">
+                        <option value="" hidden>Generate Maze</option>
+                        <option value="FullMaze">GenerateFullMaze</option>
+                        <option value="AlternateMaze">Generate alternate Maze</option>
+                        <option value="randomWalls">Generate Random walls</option>
+                    </select>
+                </li>
                 <li>
                     <select name="speed" id="speed">
                         <option value="" hidden>speed</option>
@@ -26,21 +35,30 @@
                 <li>
                     <select name="algo" id="algo">
                         <option value="" hidden>Algorithms</option>
-                        <option value="bfs" >bfs</option>
-                        <option value="dfs" >dfs</option>
-                        <option value="dijkstra" > Dijkstra </option>
+                        <option value="bfs">bfs</option>
+                        <option value="dfs">dfs</option>
+                        <option value="dijstkra"> Dijkstra </option>
+                        <option value="greedy">greedy</option>
+                        <option value="Astar">A* (A star)</option>
                     </select>
                 </li>
             </ul>
         </div>
     </nav>
     <header class="header">
-        <div>start Node</div>
-        <div><span id=""></span>Target Node</div>
-        <div><span id="unvisited-node">&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;Unvisited Node</div>
-        <div><span id="visited-node">&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;visited Node</div>
-        <div><span id="wall-node">&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;wall node</div>
-        <div><span id="shortest-path-node">&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;shortest-path-node</div>
+        <div id="guide">
+            <div><span><img src="./assets/source.png" alt="source-img" class="source-img"></span>start Node</div>
+            <div><span><img src="./assets/target.png" class="target-img" alt="target-img"></span>Target Node</div>
+            <div><span id="unvisited-node">&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;Unvisited Node</div>
+            <div><span id="visited-node">&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;visited Node</div>
+            <div><span id="wall-node">&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;wall node</div>
+            <div><span id="shortest-path-node">&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;shortest-path-node</div>
+        </div>
+
+        <div id="socials">
+            <a href="https://github.com/Manish-dahiya">Github</a>&nbsp;
+            <a href="https://x.com/Manish_dahiya07">twitter</a>
+        </div>
     </header>
 
     <div id="board">
@@ -49,4 +67,5 @@
 
     <script src="./js/index.js"></script>
 </body>
+
 </html>

@@ -2,12 +2,18 @@ var cells;
 var matrix = []
 var col;
 var row;
+var algorithm;
+var speed=null;
+var mazetype;
 
 const board = document.getElementById("board");
 const clearWallsBtn = document.getElementById("clearWallsBtn")
 const clearBoardBtn = document.getElementById("clearBoardBtn")
 const generateMazeBtn = document.getElementById("generateMazeBtn")
 const visualiseBtn=document.getElementById("visualiseBtn");
+const selectAlgo=document.getElementById("algo")
+const selectSpeed= document.getElementById("speed")
+const selectMaze=document.getElementById("mazetype")
 
 
 function renderBoard(cellWidth = 20) {
@@ -114,6 +120,7 @@ clearBoardBtn.addEventListener("click", () => {
         cell.classList.remove("visited");
         cell.classList.remove("path")
         cell.classList.remove("costly");
+        
     })
 })
 clearWallsBtn.addEventListener("click", () => {
@@ -221,33 +228,125 @@ function generateMaze(rowStart, rowEnd, colStart, colEnd, surroundingWall, orien
 
 }
 
-generateMazeBtn.addEventListener("click",()=>{
-    cells.forEach((cell)=>{
+
+function generateAlternateMaze(rowStart, rowEnd, colStart, colEnd, stepSize) {
+    for (let i = rowStart; i <= rowEnd; i++) {
+        for (let j = colStart; j <= colEnd; j++) {
+            // Create stairs by making walls in a staggered manner
+            if ((i % stepSize === 0) && (j % stepSize === 0)) {
+                if (i < rowEnd && matrix[i][j] && !matrix[i][j].classList.contains("source") && !matrix[i][j].classList.contains("target")) {
+                    wallToAnimate.push(matrix[i][j]); // Vertical wall
+                }
+                if (j < colEnd && matrix[i][j] && !matrix[i][j].classList.contains("source") && !matrix[i][j].classList.contains("target")) {
+                    wallToAnimate.push(matrix[i][j]); // Horizontal wall
+                }
+            }
+        }
+    }
+}
+function generateRandomMaze(rowStart, rowEnd, colStart, colEnd,wallCount) {
+    
+    for (let i = rowStart; i <= rowEnd; i++) {
+        for (let j = colStart; j <= colEnd; j++) {
+            if(wallCount==0)return;
+            // Create stairs by making walls in a staggered manner
+            let randomRow= Math.floor(Math.random()*(row-1)+1);
+            let randomCol=Math.floor(Math.random()*(col-1)+1);
+          
+                if (randomRow < rowEnd && randomCol < colEnd && matrix[randomRow][randomCol] && !matrix[randomRow][randomCol].classList.contains("source") && !matrix[randomRow][randomCol].classList.contains("target")) {
+    
+                    matrix[randomRow][randomCol].classList.add("wall")
+                    wallCount--;
+                }
+            
+        }
+    }
+}
+
+selectMaze.addEventListener("change", (e) => {
+    mazetype = e.target.value;
+    // Optionally, reset the maze on selection change
+    resetMaze();
+    
+    switch (mazetype) {
+        case "FullMaze":
+            generateMaze(0, row - 1, 0, col - 1, false, "horizontal");
+            break; // Add a break statement to prevent fall-through
+        case "AlternateMaze":
+            generateAlternateMaze(0, row - 1, 0, col - 1, 2);
+            break; // Add a break statement
+        case "randomWalls":
+            generateRandomMaze(0, row - 1, 0, col - 1, 50);
+            break; // Add a break statement
+        default:
+            console.log("Please select a valid maze type.");
+    }
+    animate(wallToAnimate, 'wall');
+
+});
+
+// function handleMazeGeneraton(type) {
+//     // You don't need a nested click event listener here
+//     resetMaze();
+   
+// }
+
+// Function to reset the maze
+function resetMaze() {
+    cells.forEach((cell) => {
         cell.classList.remove("wall");
-        cell.classList.remove("visited")
-        cell.classList.remove("path")
-    })
-    wallToAnimate=[]
-    pathToAnimate=[];
-    generateMaze(0,row-1,0,col-1,false,"horizontal")
-    animate(wallToAnimate,'wall');
-})
+        cell.classList.remove("visited");
+        cell.classList.remove("path");
+    });
+    wallToAnimate = [];
+    pathToAnimate = [];
+}
 
 
 
 ///////////////////PATH FINDING ALGORITHM////////////////
 ///////////////////////BFS///////////////////////////////
+selectAlgo.addEventListener("change",(e)=>{
+    algorithm=e.target.value
+})
+selectSpeed.addEventListener("change",(e)=>{
+    if(e.target.value=="slow"){
+        speed=10; //delay in animation
+    }
+    else if(e.target.value=="medium"){
+        speed=5;
+    }
+    else {
+        speed=2
+    }
+    
+})
 
 var visitedCell=[];
 var pathToAnimate=[]
 visualiseBtn.addEventListener("click",()=>{
     visitedCell=[];
     pathToAnimate=[]
-    // dijstkra();
-    // assignWeigths()
-    // greedy()
-    bfs()
-    // astar()  
+
+    switch(algorithm){
+        case "dijstkra":
+            dijstkra()
+            break;
+        case "greedy":
+            greedy()
+            break;
+        case "bfs":
+            bfs()
+            break;
+        case "Astar":
+            Astar();
+            break;
+        case "dfs":
+            
+        var visited=new Set();
+            dfs(source,visited);
+            break;
+    }
     animate(visitedCell,"visited")
     
 })
@@ -316,11 +415,13 @@ class priority_queue{
         this.upheapify(this.length-1);
     }
     pop(){
+
         this.swap(0,this.length-1);
         const poped=this.elements.pop();
         this.length--;
         this.downHeapify(0);
         return poped;
+
     }
     upheapify(i){
         if(i==0)return ;//reached at top
@@ -350,6 +451,16 @@ class priority_queue{
     swap(x, y) {
         [this.elements[x], this.elements[y]] = [this.elements[y], this.elements[x]];
     }
+    isPresent(coordinate) {
+        for (let element of this.elements) {
+            if (element.coordinate.x === coordinate.x && element.coordinate.y === coordinate.y) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+ 
 }
 
 function dijstkra(){
@@ -469,67 +580,106 @@ function greedy(){
 }
 
 ///////////////////A* algorithm///////////////////
-function astar(){
-    const openSet=new priority_queue();//our pq is the open set
-    closedSet=[];//for the purpose of visited
-    const parentMap=new Map();
-    visitedCell=[]//for animation purpose
-    const distance=[]
 
-    for(let i=0;i<row;i++){
-        const currRow=[]
-        for(let j=0;j<col;j++){
-            currRow.push(Infinity)
+function Astar() {
+    const pq = new priority_queue();;
+    const  closedSet= new Set();//closedset
+    const openSet = new Set();//openset which server the same purpose as priority queue you need this separate because a priority queue doesn't provide an efficient way to check if a node is already in it.
+    const parent = new Map();
+    const distance = [];//gscore
+
+    for (let i = 0; i < row; i++) {
+        const INF = [];
+        for (let j = 0; j < col; j++) {
+            INF.push(Infinity);
         }
-        distance.push(currRow)
+        distance.push(INF);
     }
 
     distance[source.x][source.y] = 0;
-    openSet.push({coordinate:source,cost: 0 + heuristicValue(source)});
+    pq.push({ cordinate: source, cost: heuristicValue(source) });
     
-    let drows = [-1, 0, 1, 0];
-    let dcols = [0, 1, 0, -1];
 
-    while(openSet.length >0){
-        const {coordinate,cost:fn}=openSet.pop();
-        let i= coordinate.x;
-        let j=coordinate.y;
+    while (pq.length > 0) {
+        const { cordinate: current } = pq.pop();
+       
 
-        if(i==target.x && j==target.y){
-            getPath(parentMap,target);
-            return 
+        //you find the target
+        if (current.x === target.x && current.y === target.y) {
+            getPath(parent, target);
+            return;
         }
 
-        closedSet.push(`${i}-${j}`);//only mark it visited when all it's neighbours are done 
+        closedSet.add(`${current.x}-${current.y}`); //marked it visited because now we will processing it's neighbours
 
-        for(let k=0;k<4;k++){
-            let nrow= i + drows[k];
-            let ncol= j +  dcols[k];
+        const neighbours = [
+            { x: current.x - 1, y: current.y },//up
+            { x: current.x, y: current.y + 1 },//right
+            { x: current.x + 1, y: current.y },//bottom
+            { x: current.x, y: current.y - 1 }//right
+        ];
 
-            if (nrow >= 0 && nrow < row && ncol >= 0 && ncol < col  && !closedSet.includes(`${nrow}-${ncol}`)  && !matrix[nrow][ncol].classList.contains("wall")) {
-                const gn = distance[i][j] + getEdgeWeight(nrow,ncol);
-                const newfn= gn + heuristicValue({x:nrow,y:ncol});
-                if(newfn < distance[nrow][ncol]){
-                parentMap.set(`${nrow}-${ncol}`,coordinate);//child:parent
-                visitedCell.push(matrix[nrow][ncol])  //for animation purpose
-                distance[nrow][ncol]= newfn;
+        for (const neighbour of neighbours) {
+            const key = `${neighbour.x}-${neighbour.y}`;
 
-                
-                openSet.push({coordinate:{x:nrow,y:ncol},cost:newfn});
+            if ((neighbour.x >=0 && neighbour.x <row && neighbour.y>=0 && neighbour.y <col) &&
+                !closedSet.has(key) &&//this should not be visited
+                !openSet.has(key) && //this should not be queued
+                !matrix[neighbour.x][neighbour.y].classList.contains('wall')
+            ) {
+
+                //Assuming edge weight = 1, between adjacent vertices
+                const edgeWeight = 1;
+                const gn = distance[current.x][current.y] + edgeWeight;
+                const newfn = gn + heuristicValue(neighbour);
+
+                if (gn < distance[neighbour.x][neighbour.y]) {
+                    distance[neighbour.x][neighbour.y] = gn;
+
+                    pq.push({ cordinate: neighbour, cost: newfn });
+                    openSet.add(key);//openset to track which elements are in the pq.
+
+                    parent.set(key, current);
+                    visitedCell.push(matrix[current.x][current.y]);
                 }
             }
-
-        }        
-        
+        }
     }
 }
+
+    function dfs(node,visited){
+        if(node.x==target.x && node.y==target.y){
+            return true;
+        }
+
+        visitedCell.push(matrix[node.x][node.y]);
+        visited.add(`${node.x}-${node.y}`);
+
+        let drows=[-1,0,1,0];
+        let dcols=[0,1,0,-1];
+
+        for(let k=0;k<4;k++){
+            let nrow= node.x + drows[k];
+            let ncol=node.y +  dcols[k];
+
+            if(nrow >=0 && nrow <row  && ncol >=0 && ncol <col && !visited.has(`${nrow}-${ncol}`) && !matrix[nrow][ncol].classList.contains("wall")){
+                if(dfs({x:nrow,y:ncol}, visited)){
+                    pathToAnimate.push(matrix[nrow][ncol]); //no need for the parent map as recursion does the backtracking 
+                    return true;
+                }
+            }
+        }
+        return false
+    }
+
 
 
 
 
 
 function  animate(elements,classname){
-    let delay=10; 
+    let delay=speed?speed:10; 
+    if(classname=="path")delay=6
     if(classname=="wall")delay=1
     for(let i=0;i<elements.length;i++){
         setTimeout(()=>{
