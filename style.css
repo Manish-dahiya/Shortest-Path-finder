@@ -85,6 +85,17 @@ a:hover{
     box-shadow: 0 2px 3px -1px rgba(0, 0, 0, 0.4);
 
 }
+#footer{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    gap: 20px;
+    height: 60px;
+    padding: 20px;
+    /* border-bottom:1px solid black ; */
+    box-shadow: 0 2px 3px -1px rgba(0, 0, 0, 0.4);
+}
 #unvisited-node {
     background-color: black;
     border: 1px solid white;
@@ -118,7 +129,7 @@ a:hover{
     display: flex;
 }
 body{
-    overflow: hidden;
+    /* overflow: hidden; */
     display: flex;
     flex-direction: column;
     justify-content: center;
