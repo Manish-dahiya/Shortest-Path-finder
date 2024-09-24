@@ -1,255 +1,332 @@
-*{
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-:root {
-    --blue: #1e90ff;
-    --white: #ffffff;
-    --cells-width:20px;
-    --light-line:rgba(88, 87, 87, 0.753);
-    --wall:#34495d;
-    --path:#fffe6a;
-    --visited:#40cee3;    
-}
- select:hover{
-    color: #fffe6a;
-}
-li:hover{
-    color:#fffe6a ;
-}
-.navbar{
-    display: flex;
-    gap: 10px;
-    width: 100%;
-    background-color: #34495d;
-    height: 40px;
-   padding-block: 1.5rem;
-    justify-content: space-between;
-    color: white;
-    padding-inline: 20px;
-    align-items: center;
-    font-size: large;
-}
-.visualise-btn{
-    background-color: yellow;
-    border-radius: 10px;
+    *{
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    :root {
+        --blue: #1e90ff;
+        --white: #ffffff;
+        --cells-width:20px;
+        --cells-mobile-width:30px;
+        --light-line:rgba(88, 87, 87, 0.753);
+        --wall:#34495d;
+        --path:#fffe6a;
+        --visited:#40cee3;    
+    }
+    select:hover{
+        color: #fffe6a;
+    }
+    li:hover{
+        color:#fffe6a ;
+    }
+    .navbar{
+        display: flex;
+        gap: 20px;
+        width: 100%;
+        background-color: #34495d;
+        height: 60px;
+    padding-block: 0.5rem;
+        justify-content: space-between;
+        color: white;
+        padding-inline: 20px;
+        
+        align-items: center;
+        font-size: large;    
+    }
+    .visualise-btn{
+        background-color: yellow;
+        border-radius: 10px;
+        
+        font-size: large;
+        color: black;
+        padding-inline: 10px;
+        padding-block: 5px;
+        outline: none;
+        border: none;
+    }
+    .visualise-btn:hover{
+        background-color: rgba(255, 255, 0, 0.852);
+        cursor: pointer;
+    }
+    .ul-options{
+        display: flex;
+        gap: 20px;
+        cursor: pointer;
+    }
+    .ul-options li{
+        list-style-type: none;
+    }
+    select option{ 
+        background-color: #3a3a3a ;
+        color: white;
+    }
+    select{
+        background-color: transparent;
+        color: white;
+        border: 0;
+        outline: none;
+        cursor: pointer;
+        font-size: large;
+    }
+    a{
+        color: white;
+        text-decoration: none;
+    }
+    a:hover{
+        color: #1e90ff;
+    }
+    .header{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        gap: 20px;
+        height: 60px;
+        padding: 20px;
+        /* border-bottom:1px solid black ; */
+        box-shadow: 0 2px 3px -1px rgba(0, 0, 0, 0.4);
+
+    }
+    #footer{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        gap: 20px;
+        height: 60px;
+        padding: 20px;
+        /* border-bottom:1px solid black ; */
+        box-shadow: 0 2px 3px -1px rgba(0, 0, 0, 0.4);
+    }
+    #unvisited-node {
+        background-color: black;
+        border: 1px solid white;
+        height: 10px;
+        width: 10px;
+
+    }
+    #visited-node{
+        background-color: cyan;
+        height: 10px;
+        width: 10px;
+    }
+    #wall-node{
+        background-color: #34495d;
+        height: 10px;
+        width: 10px; 
+    }
+    #shortest-path-node{
+        background-color: yellow;
+        height: 10px;
+        width: 10px;
+    }
+    .col{
+        aspect-ratio: 1;/*to make the cells height and widht same*/
+        width:var(--cells-width);
+
+        border: 1px solid var(--light-line) ;
+        text-align: center;
+    }
+    .row{
+        display: flex;
+    }
+    body{
+        /* overflow: hidden; */
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        background-color: #1b1b1b;
+        color: white; 
+        
+    }
+    #board{ 
+        padding-inline: 10px;
+        height: calc(100vh - 60px - 40px);
+        width: 100%;
+    }
+    .source-img{
+        height: 15px;
+        width: 15px;
+        margin-top: 2px;
+        margin-right: 2px;
+    }
+    .target-img{
+        height: 15px;
+        width: 15px;
+        margin-top: 2px;
+        margin-right: 2px;
+    }
+    .wall{
+        background-color: var(--wall);
+        animation: wallAnimation 0.5s ease-out forwards ;
+    }
+    .source{
+        background: url("./assets/source.png");
+        background-size: cover;
+        animation:incoming 0.5s ease-out forwards;
+
+    }
+    @keyframes incoming {
+        0%{
+            transform: scale(0.3);
+        }
+        50%{
+            transform: scale(1.1);
+        }
+        100%{
+            transform: scale(1.0);
+        }
+    }
+
+    .target{
+        background: url("./assets/target.png");
+        background-size: cover;
+    }
+    #guide{
+        display: flex;
+        gap: 20px;
+    }
+    .path{
+        background-color: var(--path);
+        animation: pathAnimation 1s ease-out forwards
+    }
+    .visited{
+        background-color: var(--visited);
+        animation: visitedAnimation 0.2s ease-out forwards;
+    }
+    .badWeather{
+        background: url("./assets/badWeather.jpeg");
+        background-size: cover;
+    }
+
+
+    @keyframes wallAnimation {
+
+        0% {
+            transform: scale(.3);
+            background-color: var(--wall);
+        }
+
+        50% {
+            transform: scale(1.1);
+            background-color: var(--wall);
+        }
+
+        100% {
+            transform: scale(1.0);
+            background-color: var(--wall);
+        }
+    }
+    @keyframes visitedAnimation {
+        0% {
+            transform: scale(0.3);
+            background-color: rgba(34, 193, 195, 0.75); /* Turquoise */
+            border-radius: 100%;
+        }
+
+        50% {
+            background-color: rgba(253, 187, 45, 0.75); /* Golden Yellow */
+        }
+
+        75% {
+            transform: scale(1);
+            background-color: rgba(246, 89, 95, 0.75); /* Coral Pink */
+        }
+
+        100% {
+            transform: scale(1);
+            background-color: rgba(85, 239, 196, 0.75); /* Mint Green */
+        }
+    }
+    @keyframes pathAnimation {
+        0% {
+            transform: scale(.3);
+            background-color: var(--path);
+        }
+
+        50% {
+            transform: scale(1.1);
+            background-color: var(--path);
+        }
+
+        100% {
+            transform: scale(1.0);
+            background-color: var(--path);
+        }
+    }
+
+    @media (max-width:650px) {
+    .navbar{
+        display: flex;
+            flex-direction: column;
+        
+            align-items: center;
+            justify-content: center;
+            
+            height: 45vw;
+            width: 100%;
+            gap: 30px;
+
+            padding-block: 7px;
+            font-size: larger;
+    }
+    .last-section{
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        font-size:larger ;
+        justify-content: center;
+    }
+    select{
+        font-size: large;
+    }
+    .header{
+        height: 150px;
     
-    font-size: large;
-    color: black;
-    padding-inline: 10px;
-    padding-block: 5px;
-    outline: none;
-    border: none;
-}
-.visualise-btn:hover{
-    background-color: rgba(255, 255, 0, 0.852);
-    cursor: pointer;
-}
-.ul-options{
-    display: flex;
-    gap: 20px;
-    cursor: pointer;
-}
-.ul-options li{
-    list-style-type: none;
-}
-select option{ 
-    background-color: #3a3a3a ;
-    color: white;
-}
-select{
-    background-color: transparent;
-    color: white;
-    border: 0;
-    outline: none;
-    cursor: pointer;
-    font-size: large;
-}
-a{
-    color: white;
-    text-decoration: none;
-}
-a:hover{
-    color: #1e90ff;
-}
-.header{
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    gap: 20px;
-    height: 60px;
-    padding: 20px;
-    /* border-bottom:1px solid black ; */
-    box-shadow: 0 2px 3px -1px rgba(0, 0, 0, 0.4);
-
-}
-#footer{
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    gap: 20px;
-    height: 60px;
-    padding: 20px;
-    /* border-bottom:1px solid black ; */
-    box-shadow: 0 2px 3px -1px rgba(0, 0, 0, 0.4);
-}
-#unvisited-node {
-    background-color: black;
-    border: 1px solid white;
-    height: 10px;
-    width: 10px;
-
-}
-#visited-node{
-    background-color: cyan;
-    height: 10px;
-    width: 10px;
-}
-#wall-node{
-    background-color: #34495d;
-    height: 10px;
-    width: 10px; 
-}
-#shortest-path-node{
-    background-color: yellow;
-    height: 10px;
-    width: 10px;
-}
-.col{
-    aspect-ratio: 1;/*to make the cells height and widht same*/
-    width:var(--cells-width);
-
-    border: 1px solid var(--light-line) ;
-    text-align: center;
-}
-.row{
-    display: flex;
-}
-body{
-    /* overflow: hidden; */
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    background-color: #1b1b1b;
-    color: white; 
-    
-}
-#board{ 
-    padding-inline: 10px;
-    height: calc(100vh - 60px - 40px);
-    width: 100%;
-}
-.source-img{
-    height: 15px;
-    width: 15px;
-    margin-top: 2px;
-    margin-right: 2px;
-}
-.target-img{
-    height: 15px;
-    width: 15px;
-    margin-top: 2px;
-    margin-right: 2px;
-}
-.wall{
-    background-color: var(--wall);
-    animation: wallAnimation 0.5s ease-out forwards ;
-}
-.source{
-    background: url("./assets/source.png");
-    background-size: cover;
-    animation:incoming 0.5s ease-out forwards;
-
-}
-@keyframes incoming {
-    0%{
-        transform: scale(0.3);
+        display: flex;
+        width: 100%;
+        flex-direction: column;
+        font-size: larger ;
     }
-    50%{
-        transform: scale(1.1);
+    #guide{
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+        gap: 17px;
+        width: 100vw;
+        
     }
-    100%{
-        transform: scale(1.0);
+    .col{
+       /*to make the cells height and widht same*/
+        width:var( --cells-mobile-width);
+        height: var(--cells-mobile-width);
+
+        border: 1px solid var(yellow) ;
+        text-align: center;
     }
-}
-
-.target{
-    background: url("./assets/target.png");
-    background-size: cover;
-}
-#guide{
-    display: flex;
-    gap: 20px;
-}
-.path{
-    background-color: var(--path);
-    animation: pathAnimation 1s ease-out forwards
-}
-.visited{
-    background-color: var(--visited);
-    animation: visitedAnimation 0.2s ease-out forwards;
-}
-.badWeather{
-    background: url("./assets/badWeather.jpeg");
-    background-size: cover;
-}
-
-
-@keyframes wallAnimation {
-
-    0% {
-        transform: scale(.3);
-        background-color: var(--wall);
+    footer{
+        height: 30px;
+        font-size: larger;
     }
 
-    50% {
-        transform: scale(1.1);
-        background-color: var(--wall);
-    }
+    #unvisited-node {
+        background-color: black;
+        border: 1px solid white;
+        font-size: small;
 
-    100% {
-        transform: scale(1.0);
-        background-color: var(--wall);
     }
-}
-@keyframes visitedAnimation {
-    0% {
-        transform: scale(0.3);
-        background-color: rgba(34, 193, 195, 0.75); /* Turquoise */
-        border-radius: 100%;
+    #visited-node{
+        background-color: cyan;
+        font-size: small;
     }
-
-    50% {
-        background-color: rgba(253, 187, 45, 0.75); /* Golden Yellow */
+    #wall-node{
+        background-color: #34495d;
+        font-size: small;
     }
-
-    75% {
-        transform: scale(1);
-        background-color: rgba(246, 89, 95, 0.75); /* Coral Pink */
+    #shortest-path-node{
+        background-color: yellow;
+        font-size: small;
     }
-
-    100% {
-        transform: scale(1);
-        background-color: rgba(85, 239, 196, 0.75); /* Mint Green */
     }
-}
-@keyframes pathAnimation {
-    0% {
-        transform: scale(.3);
-        background-color: var(--path);
-    }
-
-    50% {
-        transform: scale(1.1);
-        background-color: var(--path);
-    }
-
-    100% {
-        transform: scale(1.0);
-        background-color: var(--path);
-    }
-}
 

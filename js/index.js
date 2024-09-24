@@ -16,7 +16,8 @@ const selectSpeed= document.getElementById("speed")
 const selectMaze=document.getElementById("mazetype")
 
 
-function renderBoard(cellWidth = 20) {
+function renderBoard() {
+    let cellWidth = window.innerWidth <= 650 ? 30 : 20;
     row = Math.floor(board.clientHeight / cellWidth);
     col = Math.floor(board.clientWidth / cellWidth);//because height is same as width
     cells = []
